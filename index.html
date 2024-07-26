@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatwoot Integration</title>
+</head>
+<body>
+    <script>
+        // Función para validar si el JSON es correcto
+        function isJSONValid(str) {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Escuchar eventos del objeto Window
+        window.addEventListener("message", function (event) {
+            if (!isJSONValid(event.data)) {
+                console.error('Invalid JSON:', event.data);
+                return;
+            }
+
+            // Procesar los datos del evento
+            const eventData = JSON.parse(event.data);
+
+            // Enviar los datos a n8n
+            fetch('https://n8n.weppa.co/webhook-test/aplicacion', {  // Cambia 'integration_service' al nombre del contenedor o la IP del servicio
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(eventData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    <h4>Chatwoot to n8n Bridge</h4>
+</body>
+</html>
